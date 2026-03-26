@@ -5,28 +5,12 @@
 # This file uses the .sh extension only to enable Bash syntax highlighting in text editors.
 #
 # Author: Marcus Vinicius Canário Viana
-# Repository: https://github.com/canarioviana/workshop_amsterdam_umc
+# Repository: https://github.com/canarioviana/bacterial_comparative_genomics
 #
 
 ############################################################
 ## SUMMARY
 ############################################################
-
-############################################################
-## 0) Working directory
-############################################################
-
-# Connect to the server
-ssh username@ipaddress
-
-# Go to workshop directory
-cd /mnt/4tb_1/workshop_umc
-
-# Create assembly directory
-mkdir -p username/comparative_analysis
-
-# Go to assembly directory
-cd username/comparative_analysis
 
 ############################################################
 ## 1) Input genomes 
