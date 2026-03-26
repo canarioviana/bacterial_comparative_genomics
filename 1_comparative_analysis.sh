@@ -460,9 +460,9 @@ zip -r 5_mobsuite.zip 5_mobsuite
 # Create a the tab separated text file "6_assembly_ids_outgroup.tsv", containing the assembly ID and species name, one genome per line.
 # Send the file to the working directory
 
-# Download outgroup Leptonema illini DSM 21528 (GCF_000243335.1)
+# Download outgroup
 # Create genome list
-echo -e GCF_000243335.1"\t"DSM21528 > 6_assembly_ids_outgroup.tsv
+echo -e GCF_000XXXXXX.X"\t"XXXXXXX > 6_assembly_ids_outgroup.tsv
 
 # Create output directory
 mkdir -p 6_phylogeny_outgroup
