@@ -19,21 +19,6 @@
 ############################################################
 ## Input genomes from NCBI GenBank
 
-# Leptospira interrogans from GenBank
-# https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=173
-# Filters:
-#   Annotated by RefSeq
-#   Assembly level complete
-#   Exclude atypical genomes
-#   Exclude MAGs
-#   Exclude Genomes from large multi-isolate projects
-#   Total of 62 genomes
-# Download table
-
-# Second filter:
-# A serovar name in the column "Organism Name" and maximum of two strains per serovar.
-# Total of 24 genomes
-
 # Input file list
 # Create the file 1_assembly_ids.tsv contaning accession numbers and strains names separated by tab, one per line and no column names
 
@@ -481,7 +466,7 @@ zip -r 5_mobsuite.zip 5_mobsuite
 # Send the file to the working directory
 
 # Download outgroup
-# Create genome list
+# Create genome list (GenBank assembly ID, tabulation, strain name)
 echo -e GCF_000XXXXXX.X"\t"XXXXXXX > 6_assembly_ids_outgroup.tsv
 
 # Create output directory
@@ -609,14 +594,14 @@ zip -r 6_phylogeny_orthofinder.zip \
 rm -r 6_phylogeny_orthofinder
 
 # Visualize the tree online using iTOL
-# Input file: 6_phylogeny_orthofinder/OrthoFinder/Results_*/Species_Tree/SpeciesTree_rooted.txt
+# Input file: 6_phylogeny_orthofinder.nwk
 https://itol.embl.de/upload.cgi
 # Reroot the tree using DSM21258
 # Branch lenghts: Ignore
 # Advanced -> Branch metadata display -> Bootstrap metadata: Display
 # Advanced -> Branch metadata display -> Display range: 0.7 to 1
-# Datasets -> Create a dataset -> Type: Text label, Label: Serovar -> Create dataset
-    # Paste the columns from the file tree_annotation.xlsx -> Update and close
+# Datasets -> Create a dataset -> Type: Text label, Label: Label name -> Create dataset
+    # Paste the lines in format: Strain_name, tabulation, Color, tabulation, Label -> Update and close
     # Label size factor: 0.8x
 
 ############################################################
