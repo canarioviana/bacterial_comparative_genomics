@@ -645,8 +645,16 @@ conda deactivate
 
 # Go back to working directory
 cd ..
+
+# Copy result files
+cp 7_pyani/pyani/ANIb_percentage_identity.png 7_pyani_anib.png
+cp 7_pyani/pyani/ANIb_percentage_identity.tab 7_pyani_anib.tab
+
 # Compress the output directory
-zip -r 7_pyani.zip 7_pyani
+zip -r 7_pyani.zip 7_pyani 7_pyani_anib.png 7_pyani_anib.tab
+
+# Delete output directory
+rm -r 7_pyani
 
 ############################################################
 ## Genome-to-Denome Distace Calculator (GGDC) (calculate dDDH)
