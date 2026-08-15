@@ -120,7 +120,7 @@ fi
 # Delete intermediary files
 rm -r 2_gtdbtk/classify 2_gtdbtk/*summary.tsv
 # Compress the output directory
-zip -r 2_gtdbtk.zip 2_gtdbtk
+zip -r 2_gtdbtk.zip 2_gtdbtk 2_gtdbtk_*.tsv
 # Delete the output directory
 rm -r 2_gtdbtk
 
@@ -148,7 +148,7 @@ cp 2_checkm/quality_report.tsv 2_checkm2.tsv
 # Delete intermediary files
 rm -r 2_checkm/diamond_output 2_checkm/protein_files
 # Compress the output directory
-zip -r 2_checkm.zip 2_checkm
+zip -r 2_checkm.zip 2_checkm 2_checkm2.tsv
 # Delete the output directory
 rm -r 2_checkm
 
@@ -182,9 +182,9 @@ done
 # Deactivate Conda environment
 conda deactivate
 # Compress the output directory
-zip -r 2_gunc.zip 2_gunc
+zip -r 2_gunc.zip 2_gunc 2_gunc.tsv
 # Delete the output directory
-# rm -r 2_gunc 2_gunc_temp 
+rm -r 2_gunc 2_gunc_temp 
 
 
 ############################################################
