@@ -45,7 +45,7 @@ sed -i 's/\r//' 1_assembly_ids.tsv
 ## Assembly files directory
 
 # Create the genomes directory
-mkdir 1_genomes
+mkdir -p 1_genomes
 
 # Activate Conda environment
 conda activate datasets
@@ -156,7 +156,7 @@ rm -r 2_checkm
 ############################################################
 ## GUNC
 # Create an output directory
-mkdir 2_gunc 2_gunc_temp
+mkdir -p 2_gunc 2_gunc_temp
 # Activate Conda environment
 conda activate gunc
 # Run the program
@@ -198,7 +198,7 @@ quast.py -m 0 -o 2_quast 1_genomes/*.fasta
 conda deactivate
 cp 2_quast/transposed_report.tsv 2_quast.tsv
 # Compress the output directory
-zip -r 2_quast.zip 2_quast
+zip -r 2_quast.zip 2_quast 2_quast.tsv
 # Delete the output directory
 rm -r 2_quast
 
@@ -223,7 +223,7 @@ nano 3_selected_genomes.tsv
 ## Create a directory for the selected genomes
 
 # Create the directory
-mkdir 3_selected_genomes
+mkdir -p 3_selected_genomes
 # Copy the selected files
 parallel --colsep "\t" -a 3_selected_genomes.tsv cp 1_genomes/{2}.fasta 3_selected_genomes/
 # Compress the directory 3_selected_genomes
@@ -293,7 +293,7 @@ rm -r 1_genomes
 # NCBI selects the best genome assemblies from GenBank for the RefSeq database, so it has fewer genomes
 
 # Create directory for genome annotation
-mkdir 4_genome_annotation
+mkdir -p 4_genome_annotation
 
 # Activate Conda environment
 conda activate datasets
