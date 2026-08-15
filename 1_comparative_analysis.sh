@@ -580,24 +580,33 @@ fi
 
 # Activate Conda environment
 conda activate orthofinder
-#Run OrthoFinder using FastTree for tree inference (FASTER, ~17 minutes)
+# Run OrthoFinder using FastTree for tree inference (FASTER, ~17 minutes)
 orthofinder -t $(nproc --ignore=1) -M msa -T fasttree -f . 2>&1 | tee orthofinder_fastree_stdout.log
 # #Run OrthoFinder using IQTREE for tree inference (SLOWER)
 # orthofinder -t $(nproc --ignore=1) -M msa -T iqtree -f . 2>&1 | tee orthofinder_iqtree_stdout.log
 # Deactivate Conda environment
 conda deactivate
 
-#Go to maind directory
+# Go to maind directory
 cd ..
+
+# Copy species tree
+recent_dir=$(ls -td 6_phylogeny_orthofinder/OrthoFinder/Results_*/ | head -n 1)
+cp "${recent_dir}Species_Tree/SpeciesTree_rooted.txt" 6_phylogeny_orthofinder.nwk
+# The number of single-copy genes used for the phylogeny
+grep "^Species tree" 6_phylogeny_orthofinder/orthofinder_fastree_stdout.log > 6_phylogeny_orthofinder_used_genes.txt
 
 # Compress the output directory
 zip -r 6_phylogeny_orthofinder.zip \
 6_phylogeny_orthofinder/OrthoFinder/Results_*/Species_Tree \
 6_phylogeny_orthofinder/OrthoFinder/Results_*/MultipleSequenceAlignments/SpeciesTreeAlignment.fa \
 6_phylogeny_orthofinder/orthofinder_*.log \
-6_phylogeny_orthofinder/OrthoFinder/Results_*/Log.txt
+6_phylogeny_orthofinder/OrthoFinder/Results_*/Log.txt \
+6_phylogeny_orthofinder.nwk \
+6_phylogeny_orthofinder_used_genes.txt
 
-# The number of single-copy genes used for the phylogeny is informed in the log files in 6_phylogeny_orthofinder/orthofinder_*.log 
+# Delete output directory
+rm -r 6_phylogeny_orthofinder
 
 # Visualize the tree online using iTOL
 # Input file: 6_phylogeny_orthofinder/OrthoFinder/Results_*/Species_Tree/SpeciesTree_rooted.txt
@@ -609,7 +618,6 @@ https://itol.embl.de/upload.cgi
 # Datasets -> Create a dataset -> Type: Text label, Label: Serovar -> Create dataset
     # Paste the columns from the file tree_annotation.xlsx -> Update and close
     # Label size factor: 0.8x
-# The strains of serovar Canicola (LJ178 and 782) are in different clades!
 
 ############################################################
 # 7) Comparative analysis
