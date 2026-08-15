@@ -113,7 +113,7 @@ ppanggolin_matrix <- merge(x=ppanggolin_matrix, y=rgi, by.x="Gene", by.y="ORF_ID
 # Save table
 ppanggolin_matrix[is.na(ppanggolin_matrix)] <- ""
 ppanggolin_matrix[ppanggolin_matrix=="NA"] <- ""
-write.table(ppanggolin_matrix, "7_ppanggolin/matrix_annotated.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
-write.table(ppanggolin_matrix, "7_ppanggolin_matrix_annotated.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
+write.table(ppanggolin_matrix, "7_ppanggolin_R/matrix_annotated.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
+write.table(ppanggolin_matrix, "7_ppanggolin_R/matrix_annotated.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
 
 
