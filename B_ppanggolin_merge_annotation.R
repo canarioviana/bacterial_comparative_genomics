@@ -10,6 +10,8 @@ library(tidyverse)
 ###########################################################
 # PPanGGOLiN
 ppanggolin_matrix <- read.delim(file = "7_ppanggolin/matrix.csv", header = T, sep = ",", check.names = F)
+write.table(ppanggolin_matrix, "7_ppanggolin/matrix.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
+write.table(ppanggolin_matrix, "7_ppanggolin_matrix.tsv", row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t")
 
 ###########################################################
 # EggNOG-mapper
