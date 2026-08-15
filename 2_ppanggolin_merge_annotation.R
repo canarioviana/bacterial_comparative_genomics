@@ -30,16 +30,16 @@ colnames(dbcan)[colnames(dbcan) != "Gene ID"] <- paste0("dbcan_", colnames(dbcan
 ppanggolin_matrix <- merge(x=ppanggolin_matrix, y=dbcan, by.x="Gene", by.y="Gene ID", all.x=T, sort=F)
 
 ###########################################################
-# AMRFinder
-amrfinder <- read.delim(file = "annotation/amrfinder/amrfinder.tsv", header = T, sep = "\t", check.names = F)
-colnames(amrfinder)[colnames(amrfinder) != "Protein id"] <- paste0("amr_", colnames(amrfinder)[colnames(amrfinder) != "Protein id"])
-ppanggolin_matrix <- merge(x=ppanggolin_matrix, y=amrfinder, by.x="Gene", by.y="Protein id", all.x=T, sort=F)
-
-###########################################################
 # VFDB
 vfdb <- read.delim(file = "annotation/vfdb/vfdb_header.tsv", header = T, sep = "\t", check.names = F)
 colnames(vfdb)[colnames(vfdb) != "qseqid"] <- paste0("vfdb_", colnames(vfdb)[colnames(vfdb) != "qseqid"])
 ppanggolin_matrix <- merge(x=ppanggolin_matrix, y=vfdb, by.x="Gene", by.y="qseqid", all.x=T, sort=F)
+
+###########################################################
+# AMRFinder
+amrfinder <- read.delim(file = "annotation/amrfinder/amrfinder.tsv", header = T, sep = "\t", check.names = F)
+colnames(amrfinder)[colnames(amrfinder) != "Protein id"] <- paste0("amr_", colnames(amrfinder)[colnames(amrfinder) != "Protein id"])
+ppanggolin_matrix <- merge(x=ppanggolin_matrix, y=amrfinder, by.x="Gene", by.y="Protein id", all.x=T, sort=F)
 
 ###########################################################
 # RGI
