@@ -13,20 +13,23 @@ library(tidyr)
 # ===============================
 
 # Create R Studio output directory
-dir.create("exclusive_genes")
+dir.create("7_ppanggolin_R/exclusive_genes")
 
 # ===============================
 # Load Data
 # ===============================
 
-# Create the file genome_groups.tsv with the columns "Genome" for genome ID and "Group" for group name. 
-# Put the files genome_groups.tsv and matrix_annotated.tsv in the working directory
+# Create the file 7_ppanggolin_R/genome_groups.tsv with the columns:
+# "Genome" for genome ID (as used in PPanGGOLiN)
+# and "Group" for group name
+# Do not add column names
+# Put the file genome_groups.tsv in the working directory 7_ppanggolin_R
 
-# Import gene groups (matrix.csv)
+# Import gene groups (ppanggolin_matrix.tsv)
 matrix <- read.delim(
-  file = "matrix.csv",
+  file = "7_ppanggolin_R/ppanggolin_matrix.tsv",
   header = TRUE,
-  sep = ",",
+  sep = "\t",
   stringsAsFactors = FALSE,
   check.names = FALSE
 )
@@ -38,7 +41,7 @@ rm(matrix)
 
 # Import gene groups (matrix_annotated.tsv)
 matrix_annotated <- read.delim(
-  file = "matrix_annotated.tsv",
+  file = "7_ppanggolin_R/ppanggolin_matrix_annotated.tsv",
   header = TRUE,
   sep = "\t",
   stringsAsFactors = FALSE,
@@ -64,11 +67,12 @@ gc()
 
 # Import genome groups (genome_groups.tsv)
 genome_groups <- read.delim(
-  file = "genome_groups.tsv",
+  file = "7_ppanggolin_R/genome_groups.tsv",
   header = TRUE,
   sep = "\t",
   stringsAsFactors = FALSE
 )
+colnames(genome_groups) <- c("Genome", "Group")
 
 # Dataframe with the Genome and Group columns
 genome_groups <- genome_groups %>% 
@@ -141,7 +145,7 @@ core_exclusive_stats_annotated <- core_exclusive_stats %>%
 # Write table
 write.table(
   core_exclusive_stats_annotated,
-  file = "exclusive_genes/core_exclusive_stats_annotated.tsv",
+  file = "7_ppanggolin_R/exclusive_genes/core_exclusive_stats_annotated.tsv",
   sep = "\t",
   quote = FALSE,
   row.names = FALSE
@@ -174,7 +178,7 @@ gc()
 write.table(
   core_exclusive_genes_annotated,
   file = paste0(
-    "exclusive_genes/core_exclusive_min",
+    "7_ppanggolin_R/exclusive_genes/core_exclusive_min",
     min_core_pct * 100,
     "pct_annotated.tsv"
   ),
@@ -190,7 +194,7 @@ for (g in unique(core_exclusive_genes_annotated$Group)) {
   write.table(
     out,
     file = paste0(
-      "exclusive_genes/core_exclusive_",
+      "7_ppanggolin_R/exclusive_genes/core_exclusive_",
       g,
       "_min",
       min_core_pct * 100,
@@ -217,7 +221,7 @@ gc()
 # Save summary
 write.table(
   core_summary_counts,
-  file = "exclusive_genes/exclusive_core_counts_per_group.tsv",
+  file = "7_ppanggolin_R/exclusive_genes/exclusive_core_counts_per_group.tsv",
   sep = "\t",
   quote = FALSE,
   row.names = FALSE
@@ -234,7 +238,7 @@ gc()
 # Extract exclusive genes ids
 write.table(
   unique(core_exclusive_stats_annotated$Gene),
-  file = "exclusive_genes/exclusive_genes_ids.tsv",
+  file = "7_ppanggolin_R/exclusive_genes/exclusive_genes_ids.tsv",
   quote = FALSE,
   row.names = FALSE,
   col.names = FALSE
@@ -245,7 +249,7 @@ rm(core_exclusive_stats_annotated)
 
 # # Get exclusive genes sequences
 # ssh username@ipaddress
-# cd /mnt/4tb_1/workshop_umc/backup_plan/comparative_analysis/7_ppanggolin
+# cd 7_ppanggolin
 # # Send the directory "exclusive_genes" to 7_ppanggolin
 # # Extract the fasta files
 # conda activate seqkit
