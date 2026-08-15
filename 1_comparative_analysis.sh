@@ -83,7 +83,7 @@ parallel --colsep "\t" -a 1_assembly_ids.tsv mv 1_genomes/{1}.fasta 1_genomes/{2
 ############################################################
 
 ############################################################
-## GTDB-Tk (~1 minute)
+## GTDB-Tk
 # Requires ~150GB of RAM if the species is not identified by the ANI screening step (v2.72 and database r232)
 # In case you this happens and you do not have enough RAM add manually these parameters
 # to the GTDB-Tk command line:
@@ -132,7 +132,7 @@ rm -r 2_gtdbtk
 
 
 ############################################################
-## CheckM2 (~2 minutes)
+## CheckM2
 # Activate Conda environment
 conda activate checkm2
 # Run the program
@@ -154,7 +154,7 @@ rm -r 2_checkm
 
 
 ############################################################
-## GUNC (~7 minutes)
+## GUNC
 # Create an output directory
 mkdir 2_gunc 2_gunc_temp
 # Activate Conda environment
@@ -346,7 +346,7 @@ zip -r 4_genome_annotation.zip 4_genome_annotation
 ############################################################
 
 ############################################################
-## MOB-suite (~5 minutes)
+## MOB-suite
 
 # Create an output directory
 mkdir 5_mobsuite
