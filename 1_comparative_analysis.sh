@@ -84,25 +84,41 @@ parallel --colsep "\t" -a 1_assembly_ids.tsv mv 1_genomes/{1}.fasta 1_genomes/{2
 
 ############################################################
 ## GTDB-Tk (~1 minute)
-# Requires 64GB of RAM if the species is not identified by the ANI screening step
+# Requires ~150GB of RAM if the species is not identified by the ANI screening step (v2.72 and database r232)
+# In case you this happens and you do not have enough RAM add manually these parameters
+# to the GTDB-Tk command line:
+# "--scratch_dir /tmp/gtdbtk_scratch_${USER}_$$"
+# "--pplacer_cpus" followed by a number of CPUs (>= 4)
+
 # Activate Conda environment
 conda activate gtdbtk
 # Run the program
 gtdbtk classify_wf \
 --cpus $(nproc --ignore=1) \
 --extension .fasta \
---mash_db /db/gtdbtk \
 --genome_dir 1_genomes \
 --out_dir 2_gtdbtk
 # Deactivate Conda environment
 conda deactivate
 # Copy and rename output files
-if [ -f "2_gtdbtk/gtdbtk.bac120.summary.tsv" ]; then
-    cp 2_gtdbtk/gtdbtk.bac120.summary.tsv 2_gtdbtk_bacteria.tsv
+for type in "bac120:bacteria" "ar53:archaea"; do
+    src="2_gtdbtk/gtdbtk.${type%:*}.summary.tsv"
+    label="${type#*:}"
+    
+    if [ -f "$src" ]; then
+        cp "$src" "2_gtdbtk/gtdbtk_${label}.tsv"
+        cp "2_gtdbtk/gtdbtk_${label}.tsv" "2_gtdbtk_${label}.tsv"
+    fi
+done
+# Concatenate archeae and bacteria files
+if [ -f 2_gtdbtk/gtdbtk_archaea.tsv ] && [ -f 2_gtdbtk/gtdbtk_bacteria.tsv ]; then
+    awk 'NR==1 || FNR>1' \
+    2_gtdbtk/gtdbtk_archaea.tsv 2_gtdbtk/gtdbtk_bacteria.tsv \
+    > 2_gtdbtk/gtdbtk_arquea_bacteria.tsv
+    cp 2_gtdbtk/gtdbtk_arquea_bacteria.tsv 2_gtdbtk_arquea_bacteria.tsv
 fi
-if [ -f "2_gtdbtk/gtdbtk.ar53.summary.tsv" ]; then
-    cp 2_gtdbtk/gtdbtk.ar53.summary.tsv 2_gtdbtk_archaea.tsv
-fi
+# Delete intermediary files
+rm -r 2_gtdbtk/classify 2_gtdbtk/*summary.tsv
 # Compress the output directory
 zip -r 2_gtdbtk.zip 2_gtdbtk
 # Delete the output directory
@@ -129,8 +145,12 @@ checkm2 predict \
 conda deactivate
 # Copy and rename the output file
 cp 2_checkm/quality_report.tsv 2_checkm2.tsv
+# Delete intermediary files
+rm -r 2_checkm/diamond_output 2_checkm/protein_files
+# Compress the output directory
+zip -r 2_checkm.zip 2_checkm
 # Delete the output directory
-# rm -r 2_checkm
+rm -r 2_checkm
 
 
 ############################################################
