@@ -293,29 +293,35 @@ datasets download genome accession \
 unzip genome_data.zip
 # Rehydrate directory
 datasets rehydrate --directory .
-# Go to the genomes directory
-cd ncbi_dataset/data
-# Rename files
-for sample in *; do
-    if [ -d "$sample" ]; then cd $sample
-    mv protein.faa "$sample".faa
-    mv cds_from_genomic.fna "$sample".ffn
-    mv genomic.gbff "$sample".gbk
-    mv genomic.gff "$sample".gff
-    rename 's/(.*?_.*?)_.*/$1.fsa/' *.fna
-    cd ..
-    fi
-done
-# Deactivate Conda environment
-conda deactivate
 
-# Move genomes directories (GC*/) to ../../4_genome_annotation
-mv GC*/ ../../4_genome_annotation
-# Go to main directory
-cd ../../
-# Rename files according to the file 3_selected_genomes.tsv
-parallel --colsep "\t" -a 3_selected_genomes.tsv mv 4_genome_annotation/{1} 4_genome_annotation/{2}
-parallel --colsep "\t" -a 3_selected_genomes.tsv rename 's/{1}/{2}/' 4_genome_annotation/{2}/*
+# Organize output
+while IFS=$'\t' read -r accession name others; do
+
+    # Create output directory
+    mkdir -p "5_genomes/$name"
+
+    # Input directory
+    input_dir="ncbi_dataset/data/$accession"
+
+    # Move files if they exist
+    [[ -f "$input_dir/protein.faa" ]] &&
+        mv "$input_dir/protein.faa" "5_genomes/$name/$name.faa"
+
+    [[ -f "$input_dir/cds_from_genomic.fna" ]] &&
+        mv "$input_dir/cds_from_genomic.fna" "5_genomes/$name/$name.ffn"
+
+    [[ -f "$input_dir/genomic.gbff" ]] &&
+        mv "$input_dir/genomic.gbff" "5_genomes/$name/$name.gbk"
+
+    [[ -f "$input_dir/genomic.gff" ]] &&
+        mv "$input_dir/genomic.gff" "5_genomes/$name/$name.gff"
+
+    # Genomic FASTA
+    mv "$input_dir/${accession}"_*_genomic.fna \
+       "5_genomes/$name/$name.fsa"
+
+done < <(tr -d '\r' < 3_selected_genomes.tsv | awk '1')
+
 # Delete temporary files and directory
 rm -r genome_data.zip ncbi_dataset README.md md5sum.txt
 
