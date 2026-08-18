@@ -298,27 +298,27 @@ datasets rehydrate --directory .
 while IFS=$'\t' read -r accession name others; do
 
     # Create output directory
-    mkdir -p "5_genomes/$name"
+    mkdir -p "4_genome_annotation/$name"
 
     # Input directory
     input_dir="ncbi_dataset/data/$accession"
 
     # Move files if they exist
     [[ -f "$input_dir/protein.faa" ]] &&
-        mv "$input_dir/protein.faa" "5_genomes/$name/$name.faa"
+        mv "$input_dir/protein.faa" "4_genome_annotation/$name/$name.faa"
 
     [[ -f "$input_dir/cds_from_genomic.fna" ]] &&
-        mv "$input_dir/cds_from_genomic.fna" "5_genomes/$name/$name.ffn"
+        mv "$input_dir/cds_from_genomic.fna" "4_genome_annotation/$name/$name.ffn"
 
     [[ -f "$input_dir/genomic.gbff" ]] &&
-        mv "$input_dir/genomic.gbff" "5_genomes/$name/$name.gbk"
+        mv "$input_dir/genomic.gbff" "4_genome_annotation/$name/$name.gbk"
 
     [[ -f "$input_dir/genomic.gff" ]] &&
-        mv "$input_dir/genomic.gff" "5_genomes/$name/$name.gff"
+        mv "$input_dir/genomic.gff" "4_genome_annotation/$name/$name.gff"
 
     # Genomic FASTA
     mv "$input_dir/${accession}"_*_genomic.fna \
-       "5_genomes/$name/$name.fsa"
+       "4_genome_annotation/$name/$name.fsa"
 
 done < <(tr -d '\r' < 3_selected_genomes.tsv | awk '1')
 
