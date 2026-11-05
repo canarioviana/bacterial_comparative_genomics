@@ -618,7 +618,7 @@ rm -r 6_phylogeny_orthofinder
 
 # Visualize the tree online using iTOL
 # Input file: 6_phylogeny_orthofinder.nwk
-https://itol.embl.de/upload.cgi
+# https://itol.embl.de/upload.cgi
 # Reroot the tree using DSM21258
 # Branch lenghts: Ignore
 # Advanced -> Branch metadata display -> Bootstrap metadata: Display
