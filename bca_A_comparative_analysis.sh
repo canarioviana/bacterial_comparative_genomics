@@ -75,16 +75,32 @@ parallel --colsep "\t" -a 1_assembly_ids.tsv mv 1_genomes/{1}.fasta 1_genomes/{2
 # "--scratch_dir /tmp/gtdbtk_scratch_${USER}_$$"
 # "--pplacer_cpus" followed by a number of CPUs (>= 4)
 
-# Activate Conda environment
+# Create scratch directory
+scratch_dir="/tmp/gtdbtk_scratch_${USER}_$$"
+mkdir -p "$scratch_dir"
+
+# Activate conda environment
 conda activate gtdbtk
-# Run the program
+# Threads available (leave one free for the system)
+ncpu=$(nproc --ignore=1)
+# pplacer memory grows with its thread count: use half of the
+# available threads, at least 1 and at most 12
+pplacer_cpus=$(( ncpu / 2 ))
+(( pplacer_cpus < 1 ))  && pplacer_cpus=1
+(( pplacer_cpus > 12 )) && pplacer_cpus=12
+# Run software
 gtdbtk classify_wf \
---cpus $(nproc --ignore=1) \
---extension .fasta \
---genome_dir 1_genomes \
---out_dir 2_gtdbtk
+    --cpus "$ncpu" \
+    --pplacer_cpus "$pplacer_cpus" \
+    --scratch_dir "$scratch_dir" \
+    --batchfile "$batchfile" \
+    --out_dir "8_gtdbtk"
 # Deactivate Conda environment
 conda deactivate
+
+# Delete the temporary data
+rm -rf "$scratch_dir"
+
 # Copy and rename output files
 for type in "bac120:bacteria" "ar53:archaea"; do
     src="2_gtdbtk/gtdbtk.${type%:*}.summary.tsv"
