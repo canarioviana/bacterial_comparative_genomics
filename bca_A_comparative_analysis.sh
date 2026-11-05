@@ -94,7 +94,7 @@ gtdbtk classify_wf \
     --pplacer_cpus "$pplacer_cpus" \
     --scratch_dir "$scratch_dir" \
     --batchfile "$batchfile" \
-    --out_dir "8_gtdbtk"
+    --out_dir "2_gtdbtk"
 # Deactivate Conda environment
 conda deactivate
 
