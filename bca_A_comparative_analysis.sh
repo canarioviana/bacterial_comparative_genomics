@@ -93,7 +93,8 @@ gtdbtk classify_wf \
     --cpus "$ncpu" \
     --pplacer_cpus "$pplacer_cpus" \
     --scratch_dir "$scratch_dir" \
-    --batchfile "$batchfile" \
+    --genome_dir 1_genomes \
+    --extension fasta \
     --out_dir "2_gtdbtk"
 # Deactivate Conda environment
 conda deactivate
