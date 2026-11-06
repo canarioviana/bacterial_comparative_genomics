@@ -345,8 +345,57 @@ rm -r genome_data.zip ncbi_dataset README.md md5sum.txt
 # If you already had a genome annotated using PGAP, put the annotation directory inside 4_genome_annotation
 # The annotation directory must have the same prefix as the annotation files. For example: 4_genome_annotation/samplename/samplename.fsa  
 
+# Summarize annotation statistics from GBK structured comments into a TSV
+# Args: $1 = input dir (default 4_genome_annotation), $2 = output TSV
+summarize_genome_annotation() {
+  local in_dir="${1:-4_genome_annotation}"
+  local out_tsv="${2:-4_genome_annotation.tsv}"
+  local -a cols=(
+    "Genes (total)" "CDSs (total)" "Genes (coding)" "CDSs (with protein)"
+    "Genes (RNA)" "rRNAs" "complete rRNAs" "tRNAs" "ncRNAs"
+    "Pseudo Genes (total)" "CDSs (without protein)"
+    "Pseudo Genes (ambiguous residues)" "Pseudo Genes (frameshifted)"
+    "Pseudo Genes (incomplete)" "Pseudo Genes (internal stop)"
+    "Pseudo Genes (multiple problems)"
+  )
+  local d s gbk key val row col
+
+  [[ -d "$in_dir" ]] || { echo "[ERROR] Input directory not found: $in_dir" >&2; return 1; }
+
+  { printf 'Sample'; printf '\t%s' "${cols[@]}"; printf '\n'; } > "$out_tsv"
+
+  for d in "$in_dir"/*/; do
+    s="$(basename "$d")"
+    gbk="${d%/}/${s}.gbk"
+    [[ -s "$gbk" ]] || { echo "[WARN] Missing or empty: $gbk" >&2; continue; }
+
+    # Parse only the first annotation block (repeated per contig in multi-record GBKs)
+    local -A kv=()
+    while IFS=$'\t' read -r key val; do kv["$key"]="$val"; done < <(
+      awk '
+        /##Genome-Annotation-Data-START##/ { inblk = 1; next }
+        /##Genome-Annotation-Data-END##/   { if (inblk) exit }
+        inblk && index($0, "::") {
+          i = index($0, "::")
+          k = substr($0, 1, i - 1); v = substr($0, i + 2)
+          gsub(/^[ \t]+|[ \t]+$/, "", k); gsub(/^[ \t]+|[ \t]+$/, "", v)
+          if (v ~ /^[0-9,]+$/) gsub(/,/, "", v)   # 2,213 -> 2213
+          print k "\t" v
+        }' "$gbk"
+    )
+
+    row="$s"
+    for col in "${cols[@]}"; do row+=$'\t'"${kv[$col]:-NA}"; done
+    printf '%s\n' "$row" >> "$out_tsv"
+    unset kv
+  done
+
+  echo "[INFO] Annotation summary written to $out_tsv"
+}
+summarize_genome_annotation "4_genome_annotation" "4_genome_annotation.tsv"
+
 # Compress the output directory
-zip -r 4_genome_annotation.zip 4_genome_annotation
+zip -r 4_genome_annotation.zip 4_genome_annotation 4_genome_annotation.tsv
 
 
 ############################################################
