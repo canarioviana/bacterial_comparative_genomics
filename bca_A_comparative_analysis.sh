@@ -173,7 +173,7 @@ gunc run \
 cp 2_gunc/*maxCSS_level.tsv 2_gunc.tsv
 # Plotting the data
 # Create an output directory
-mkdir 2_gunc/plot
+mkdir -p 2_gunc/plot
 # Loop through a list of files
 for file in 2_gunc/diamond_output/*.out; do\
    gunc plot \
@@ -406,7 +406,7 @@ zip -r 4_genome_annotation.zip 4_genome_annotation 4_genome_annotation.tsv
 ## MOB-suite
 
 # Create an output directory
-mkdir 5_mobsuite
+mkdir -p 5_mobsuite
 
 # Activate Conda environment
 conda activate mob_suite
@@ -619,7 +619,7 @@ zip -r 6_phylogeny_outgroup.zip 6_phylogeny_outgroup
 ## Phylogeny using OrthoFinder (for small datasets)
 
 # Create output directory
-mkdir 6_phylogeny_orthofinder
+mkdir -p 6_phylogeny_orthofinder
 
 # Create symbolic links of faa files to save disk space
 ln -s $PWD/6_phylogeny_outgroup/*/*.faa 6_phylogeny_orthofinder/
@@ -684,7 +684,7 @@ rm -r 6_phylogeny_orthofinder
 ## Pyani (Calculate ANI)
 
 # Create an output directory
-mkdir 7_pyani
+mkdir -p 7_pyani
 
 # Go to directory
 cd 7_pyani
