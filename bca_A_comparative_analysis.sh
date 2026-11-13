@@ -524,8 +524,21 @@ rm -r 5_crisprcasfinder
 ############################################################
 ## PHASTEST
 
+# Add the contig ID in the header for PHASTEST results page
+for d in 4_genome_annotation/*/; do
+  s="$(basename "$d")"
+  mkdir -p "5_phastest/${s}"
+
+  # Prefix each record's DEFINITION with its LOCUS name so PHASTEST shows the contig ID
+  awk '
+    /^LOCUS/      { acc = $2 }
+    /^DEFINITION/ { sub(/^DEFINITION  /, "DEFINITION  " acc " ") }
+    { print }
+  ' "${d%/}/${s}.gbk" > "5_phastest/${s}/${s}_phastest.gbk"
+done
+
 # https://phastest.ca/
-# Send the gbk file
+# Send each 5_phastest/*/*.gbk file separately
 
 ############################################################
 ## 6) Phylogenetic analysis
