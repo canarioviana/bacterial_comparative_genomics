@@ -739,22 +739,29 @@ rm -r 6_phylogeny_orthofinder
 ############################################################
 
 ############################################################
-## Pyani (Calculate ANI)
+## Pyani-plus (Calculate ANI)
 
 # Create an output directory
-mkdir -p 7_pyani
+mkdir -p 7_pyaniplus
 
 # Go to directory
-cd 7_pyani
+cd 7_pyaniplus
 
 # Create soft links for the genomes
 ln -s ../4_genome_annotation/*/*.fsa .
 rename s/fsa$/fasta/ *.fsa
 
 # Activate Conda environment
-conda activate pyani
-# Run pyani
-average_nucleotide_identity.py --gmethod seaborn -m ANIb -i . -o pyani -g
+conda activate pyani-plus
+# Create database
+pyani-plus fastani . --database fastani.db --create-db
+
+# Export the ANI, coverage and other matrices as TSV
+pyani-plus export-run --database fastani.db --outdir fastani_tables
+
+# Heatmaps and distributions
+pyani-plus plot-run --database fastani.db --outdir fastani_plots
+
 # Deactivate Conda environment
 conda deactivate
 
@@ -762,14 +769,47 @@ conda deactivate
 cd ..
 
 # Copy result files
-cp 7_pyani/pyani/ANIb_percentage_identity.png 7_pyani_anib.png
-cp 7_pyani/pyani/ANIb_percentage_identity.tab 7_pyani_anib.tab
+cp 7_pyaniplus/fastani_plots/fastANI_identity_heatmap.png 7_pyaniplus_identity.png
+cp 7_pyaniplus/fastani_tables/fastANI_identity.tsv 7_pyaniplus_identity.tsv
 
 # Compress the output directory
-zip -r 7_pyani.zip 7_pyani 7_pyani_anib.png 7_pyani_anib.tab
+zip -r 7_pyaniplus.zip 7_pyaniplus 7_pyaniplus_identity.png 7_pyaniplus_identity.tsv
 
 # Delete output directory
-rm -r 7_pyani
+rm -r 7_pyaniplus
+
+# ############################################################
+# ## Pyani (Calculate ANI)
+
+# # Create an output directory
+# mkdir -p 7_pyani
+
+# # Go to directory
+# cd 7_pyani
+
+# # Create soft links for the genomes
+# ln -s ../4_genome_annotation/*/*.fsa .
+# rename s/fsa$/fasta/ *.fsa
+
+# # Activate Conda environment
+# conda activate pyani
+# # Run pyani
+# average_nucleotide_identity.py --gmethod seaborn -m ANIb -i . -o pyani -g
+# # Deactivate Conda environment
+# conda deactivate
+
+# # Go back to working directory
+# cd ..
+
+# # Copy result files
+# cp 7_pyani/pyani/ANIb_percentage_identity.png 7_pyani_anib.png
+# cp 7_pyani/pyani/ANIb_percentage_identity.tab 7_pyani_anib.tab
+
+# # Compress the output directory
+# zip -r 7_pyani.zip 7_pyani 7_pyani_anib.png 7_pyani_anib.tab
+
+# # Delete output directory
+# rm -r 7_pyani
 
 ############################################################
 ## Genome-to-Denome Distace Calculator (GGDC) (calculate dDDH)
