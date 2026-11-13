@@ -414,38 +414,32 @@ conda activate mob_suite
 # Loop through a list of files
 for file in 4_genome_annotation/*/*.fsa; do
     # Extract sample name (PGAP annotation)
-    sample=$(basename $file .fsa)
-    # Run the program
+    sample=$(basename "$file" .fsa)
+    # Run the program (sample_id avoids "36F.fsa:" prefixes in the reports)
     mob_recon -n $(nproc --ignore=1) \
-    --infile $file \
+    --sample_id "$sample" \
+    --infile "$file" \
     --outdir 5_mobsuite/${sample}_mobsuite
 done
 # Deactivate Conda environment
 conda deactivate
 
-# Merge contig_report.families.tsv files
-if find 5_mobsuite/ -maxdepth 2 -type f -name "mobtyper_results.txt" | grep -q .; then
-    for file in 5_mobsuite/*/contig_report.txt; do \
-        cat $file;\
-        echo;\
-    done > 5_mobsuite/5_mobsuite_contig_report.families.tsv
-fi
-# Merge mobtyper_results.tsv files
-if find 5_mobsuite/ -maxdepth 2 -type f -name "mobtyper_results.txt" | grep -q .; then
-    for file in 5_mobsuite/*/mobtyper_results.txt; do \
-        cat $file; \
-        echo; \
-    done > 5_mobsuite/5_mobsuite_mobtyper_results_all.tsv
-fi
-# Merge contig_report.families.tsv files
-if find 5_mobsuite/ -maxdepth 2 -type f -name "mge.report.txt" | grep -q .; then
-    for file in 5_mobsuite/*/mge.report.txt; do \
-         cat $file; \
-         echo; \
-    done > 5_mobsuite/5_mobsuite_mge.report_all.tsv
-fi
+# Merge report files keeping a single header line
+# Args: $1 = report file name inside each sample dir, $2 = merged output file
+merge_reports() {
+    if find 5_mobsuite/ -maxdepth 2 -type f -name "$1" | grep -q .; then
+        awk 'FNR == 1 && NR != 1 { next } NF' 5_mobsuite/*/"$1" > "$2"
+    fi
+}
+# Merge contig_report.txt files
+merge_reports contig_report.txt     5_mobsuite/5_mobsuite_contig_report_all.tsv
+# Merge mobtyper_results.txt files
+merge_reports mobtyper_results.txt  5_mobsuite/5_mobsuite_mobtyper_results_all.tsv
+# Merge mge.report.txt files
+merge_reports mge.report.txt        5_mobsuite/5_mobsuite_mge.report_all.tsv
+
 # Copy merged mobtyper result file to main directory
-if ls 5_mobsuite/5_mobsuite_mobtyper_results_all.tsv > /dev/null 2>&1; then
+if [[ -s 5_mobsuite/5_mobsuite_mobtyper_results_all.tsv ]]; then
     cp 5_mobsuite/5_mobsuite_mobtyper_results_all.tsv .
 fi
 
@@ -456,12 +450,10 @@ for dir in 5_mobsuite/*/; do
     dirname=${dir#*/}
     # Extract sample name
     sample=${dirname%%_mobsuite*}
-    # Go to input directory
-    # Add sample name to the chromosome file name 
+    # Add sample name to the chromosome file name
     mv ${dir}chromosome.fasta ${dir}"$sample"_chromosome.fasta
-    # Add sample name to the plasmid file name 
+    # Add sample name to the plasmid file name
     rename s/plasmid_/"$sample"_plasmid_/ ${dir}plasmid*
-    # Leave input diretory
 done
 
 # Compress the output directory
