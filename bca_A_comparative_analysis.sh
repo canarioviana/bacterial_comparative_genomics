@@ -351,6 +351,7 @@ summarize_genome_annotation() {
   local in_dir="${1:-4_genome_annotation}"
   local out_tsv="${2:-4_genome_annotation.tsv}"
   local -a cols=(
+    "Annotation Name" "Annotation Software revision"
     "Genes (total)" "CDSs (total)" "Genes (coding)" "CDSs (with protein)"
     "Genes (RNA)" "rRNAs" "complete rRNAs" "tRNAs" "ncRNAs"
     "Pseudo Genes (total)" "CDSs (without protein)"
