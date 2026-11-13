@@ -469,6 +469,59 @@ zip -r 5_mobsuite.zip 5_mobsuite
 # A plasmid classified on the primary cluster AF922 is the chromosome 2.
 
 ############################################################
+## CRISPRcasFinder local (CRISPR/Cas system prediction)
+
+# Create the output directory
+mkdir 5_crisprcasfinder
+# Go to the output directory
+cd 5_crisprcasfinder
+# Copy binaries to the current directory
+cp -r /db/CRISPRCasFinder/* .
+
+# Activate Conda environment
+conda activate crisprcasfinder
+# Install dependencies
+macsydata install -u CASFinder==3.1.0 # You only have to run this command the first time you use this software
+# Loop through a list of files
+for file in ../4_genome_annotation/*/*.fsa; do
+    prefix=$(basename ${file} .fsa)
+    # Run CRISPR-CasFinder
+    perl CRISPRCasFinder.pl -cas -html -in $file -out "${prefix}"
+done
+# Deactivate Conda environment
+conda deactivate
+
+# Remove the CRISPRCasFinder files from the current directory
+rm -r CasFinder-2.0.3 ccf.environment.yml COPYING COPYRIGHT CRISPRCasFinder* crispr-cas_logo.png *.sh *.txt install_test README.md sel392v2.so singularity supplementary_files supplementary_tools
+# Concatenate CRISPR-CasFinder summaries
+> CRISPR-Cas_summary_all.tsv
+for directory in */; do
+    sample=$(basename $directory /)
+    echo -e $sample >> CRISPR-Cas_summary_all.tsv
+    cat "$sample"/TSV/CRISPR-Cas_summary.tsv >> CRISPR-Cas_summary_all.tsv
+    echo -e "\n" >> CRISPR-Cas_summary_all.tsv
+done
+
+# Edit the summary file header
+sed -i 's/Evidence-levels/Nb_arrays_evidence-level_1\tNb_arrays_evidence-level_2\tNb_arrays_evidence-level_3\tNb_arrays_evidence-level_4/g' CRISPR-Cas_summary_all.tsv
+# Separate into columns
+sed -i 's/,Nb/\tNb/g' CRISPR-Cas_summary_all.tsv
+# Remove the prefix
+sed -i 's/Nb_arrays_evidence-level_.=//g' CRISPR-Cas_summary_all.tsv
+# Remove commas
+sed -i 's/,\t/\t/g' CRISPR-Cas_summary_all.tsv
+# Leave the directory
+cd ..
+
+# Copy the summary file to main directory
+cp 5_crisprcasfinder/CRISPR-Cas_summary_all.tsv 5_crisprcasfinder_summary.tsv
+# Compress the output directory
+zip -r 5_crisprcasfinder.zip 5_crisprcasfinder
+# Delete the output directory
+rm -r 5_crisprcasfinder
+
+
+############################################################
 ## 6) Phylogenetic analysis
 ############################################################
 
