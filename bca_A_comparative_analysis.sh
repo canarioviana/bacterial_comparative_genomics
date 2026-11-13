@@ -520,6 +520,11 @@ zip -r 5_crisprcasfinder.zip 5_crisprcasfinder
 # Delete the output directory
 rm -r 5_crisprcasfinder
 
+############################################################
+## PHASTEST
+
+# https://phastest.ca/
+# Send the gbk file
 
 ############################################################
 ## 6) Phylogenetic analysis
